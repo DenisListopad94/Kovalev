@@ -79,49 +79,57 @@ Plane cover the distance {moscow_piter_on_plane} in {airplane.time_to_travell(mo
 
 
 class Alive:
-    def __init__(self, name: str, max_age: int, food: str, current_age: int) -> None:
+    def __init__(self, name: str, max_age: int, food: str, current_age: int, amount: int) -> None:
         self.name = name
         self.max_age = max_age
         self.food = food
         self.current_age = current_age
-
-    def eating(self, some_food: str) -> str:
-        if self.food != some_food:
-            return f'{self.name} have nothing to eat'
+        self.amount = amount
+    def eating(self, other) -> str:
+        eat_status = ''
+        if self.food != other.name or self.amount > other.amount:
+            eat_status = 'Not enough food'
         else:
-            return f'{self.name} eat {some_food}'
+            other.amount -= self.amount   
+        return eat_status
 
-    def status(self, remaining_food: str) -> str:
-        if self.current_age == self.max_age or self.eating(remaining_food) == 'Nothing to eat':
-            return 'Die'
+    def status(self, other) -> str:
+        if self.current_age >= self.max_age or self.eating(other) == 'Not enough food' or self:
+            res = 'Die'
         else:
-            return 'Alive'
+            res = f'Alive, quantity of population: {self.amount} with current age {self.current_age}'
+        print(res)
+    def get_old(self, ages:int = 1):
+        self.current_age += ages
 
 
 class Lis(Alive):
-    def __init__(self, current_age: int) -> None:
-        super().__init__('Lis', 25, 'rabbit', current_age)
+    def __init__(self, current_age: int, amount: int) -> None:
+        super().__init__('Lis', 25, 'Rabbit', current_age, amount)
 
 
 class Rabbit(Alive):
-    def __init__(self, current_age: int) -> None:
-        super().__init__('Rabbit', 9, 'plant', current_age)
+    def __init__(self, current_age: int, amount: int) -> None:
+        super().__init__('Rabbit', 9, 'Plant', current_age, amount)
 
 
 class Plant(Alive):
-    def __init__(self, current_age: int) -> None:
-        super().__init__('Plant', 2, 'sunlight', current_age)
+    def __init__(self, current_age: int, amount: int) -> None:
+        super().__init__('Plant', 2, 'Sunlight', current_age, amount)
+    def status(self) -> str:
+        print('Alive') 
 
 
-lis = Lis(24)
-rabbit = Rabbit(5)
-plant = Plant(1)
-print(lis.eating('rabbit'))
-print(lis.status('plant'))
-print(rabbit.eating('lis'))
-print(rabbit.status('plant'))
-print(plant.eating('sunlight'))
-print(plant.status('sunlight'))
+lis = Lis(24, 5)
+rabbit = Rabbit(5, 6)
+plant = Plant(1, 28)
+lis.get_old(4)
+lis.status(rabbit)
+lis.eating(rabbit)
+lis.status(plant)
+rabbit.eating(lis)
+rabbit.status(plant)
+plant.status()
 
 # # Уверен, что переусложнил, но код уже был на таком этапе, что решил допилить то, что есть
 # # Классы транспортных средств вызываются из задачи выше
