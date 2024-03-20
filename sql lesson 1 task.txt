@@ -1,0 +1,89 @@
+CREATE TABLE "actors" (
+	"id"	INTEGER NOT NULL UNIQUE,
+	"name"	TEXT NOT NULL,
+	"surname"	TEXT NOT NULL,
+	"age"	INTEGER NOT NULL CHECK("age" < 100 and "age" > 4),
+	"movie_name"	BLOB,
+	"budget"	INTEGER DEFAULT 10000000,
+	"manager"	TEXT,
+	"release_year"	INTEGER,
+	"sex"	TEXT NOT NULL CHECK("sex" = 'male' OR "sex" = 'female'),
+	PRIMARY KEY("id" AUTOINCREMENT)
+);
+
+INSERT INTO actors (name, surname,age, movie_name, budget, manager, release_year, sex) VALUES 
+('Tim','Robins',65,'The Shawshank Redemption',25000000,'Frank Darabont',1994,'male'),
+('Morgan','Freeman',86,'The Shawshank Redemption',25000000,'Frank Darabont',1994,'male'),
+('Al','Pachino',83,'The Godfather',6000000,'Francis Ford Coppola',1972,'male'),
+('Diane','Keaton',78,'The Godfather',6000000,'Francis Ford Coppola',1972,'female'),
+('Al','Pachino',83,'The Godfather Part II',13000000,'Francis Ford Coppola',1974,'male'),
+('Diane','Keaton',78,'The Godfather Part II',13000000,'Francis Ford Coppola',1974,'female'),
+('Elijah','Wood',43,'The Lord of the Rings: The Return of the King',94000000,'Piter Jackson',2003,'male'),
+('Cate','Blanchett',54,'The Lord of the Rings: The Return of the King',94000000,'Piter Jackson',2003,'female'),
+('Elijah','Wood',43,'The Lord of the Rings: The Two Towers',94000000,'Piter Jackson',2002,'male'),
+('Cate','Blanchett',54,'The Lord of the Rings: The Two Towers',94000000,'Piter Jackson',2002,'female'),
+('Brad','Pitt',60,'Fight club',63000000,'David Fincher',1999,'male'),
+('Helena','Bonham Carter',57,'Fight club',63000000,'David Fincher',1999,'female'),
+('Edward','Norton',54,'Fight club',63000000,'David Fincher',1999,'male'),
+('Brad','Pitt',60,'Mr. & Mrs. Smith',110000000,'Doug Liman',2005,'male'),
+('Angelina','Jolie',48,'Mr. & Mrs. Smith',110000000,'Doug Liman',2005,'female');
+
+--  Осознал, что рациональние было бы записывать данные пробегаясь по фамилии, а не id когда уже сделал апдей здесь и в городах поэтому решил оставить так
+ALTER TABLE actors  ADD COLUMN fee REAL; 
+UPDATE actors 
+SET fee = CASE id
+	WHEN 1 THEN 10000000
+	WHEN 2 THEN 8000000	
+	WHEN 3 THEN 12000000
+	WHEN 4 THEN 1500000
+	WHEN 5 THEN 15000000
+	WHEN 6 THEN 4500000
+	WHEN 7 THEN 6850000
+	WHEN 8 THEN 4280000
+	WHEN 9 THEN 8300000
+	WHEN 10 THEN 5720000
+	WHEN 11 THEN 4000000
+	WHEN 12 THEN 4000000
+	WHEN 13 THEN 5000000
+	WHEN 14 THEN 6500000
+	WHEN 15 THEN 6500000
+END;
+
+ALTER TABLE actors RENAME COLUMN fee to fee_actors
+ALTER TABLE actors  ADD COLUMN city TEXT; 
+UPDATE actors 
+SET city = CASE id
+	WHEN 1 THEN 'Chicago'
+	WHEN 2 THEN 'New-York'
+	WHEN 3  THEN 'Rim'
+	WHEN 4  THEN 'Neapol'
+	WHEN 5  THEN 'Rim'
+	WHEN 6  THEN 'Neapol'
+	WHEN 7 THEN 'London'
+	WHEN 8 THEN 'Manchester'
+	WHEN 9 THEN 'London'
+	WHEN 10 THEN 'Manchester'
+	WHEN 11  THEN 'New-York'
+	WHEN 12 THEN 'Liverpool'
+	WHEN 13 THEN 'New-York'
+	WHEN 14  THEN 'New-York'
+	WHEN 15 THEN 'New-York'
+END;
+
+SELECT DISTINCT * FROM actors WHERE release_year BETWEEN 1990 AND 2000
+
+-- Так как у меня вышло так, что во всех фильмах прнимало участие 2 и более актеров, то для проверки изменял название одного из фильмов, а потом вернул обратно  
+name) as 'Count of man older than 55' FROM actors WHERE age>55 and sex = 'male'
+
+SELECT name, surname, count(movie_name) as 'count of movies', sum(fee_actors) as 'total fee' FROM actors GROUP by name HAVING count(movie_name)>1 and sum(fee_actors)>9999999
+
+SELECT sum(fee_actors) as 'Total fee from 1995 to 2005' FROM actors WHERE release_year BETWEEN 1995 AND 2005
+
+SELECT movie_name, name, surname FROM actors WHERE release_year - (2024 - age) < 35
+
+-- Не работает
+movie_name WHERE movie_name REGEXP '^[a-z]' 
+
+SELECT movie_name, sum(fee_actors) as summa FROM actors GROUP BY movie_name ORDER BY summa DESC LIMIT 5
+
+SELECT movie_name, count(surname) as count_of_actors FROM actors GROUP BY movie_name ORDER BY count_of_actors DESC LIMIT 1
