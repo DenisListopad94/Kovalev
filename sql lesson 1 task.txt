@@ -28,7 +28,7 @@ INSERT INTO actors (name, surname,age, movie_name, budget, manager, release_year
 ('Brad','Pitt',60,'Mr. & Mrs. Smith',110000000,'Doug Liman',2005,'male'),
 ('Angelina','Jolie',48,'Mr. & Mrs. Smith',110000000,'Doug Liman',2005,'female');
 
---  Осознал, что рациональние было бы записывать данные пробегаясь по фамилии, а не id когда уже сделал апдей здесь и в городах поэтому решил оставить так
+-- --  Осознал, что рациональние было бы записывать данные пробегаясь по фамилии, а не id когда уже сделал апдей здесь и в городах поэтому решил оставить так
 ALTER TABLE actors  ADD COLUMN fee REAL; 
 UPDATE actors 
 SET fee = CASE id
@@ -72,17 +72,17 @@ END;
 
 SELECT DISTINCT * FROM actors WHERE release_year BETWEEN 1990 AND 2000
 
--- Так как у меня вышло так, что во всех фильмах прнимало участие 2 и более актеров, то для проверки изменял название одного из фильмов, а потом вернул обратно  
-name) as 'Count of man older than 55' FROM actors WHERE age>55 and sex = 'male'
-
-SELECT name, surname, count(movie_name) as 'count of movies', sum(fee_actors) as 'total fee' FROM actors GROUP by name HAVING count(movie_name)>1 and sum(fee_actors)>9999999
+SELECT count(DISTINCT surname) as 'Count of man older than 55' FROM actors WHERE age>55 and sex = 'male'
+-- -- Так как у меня вышло так, что во всех фильмах прнимало участие 2 и более актеров, то для проверки изменял название одного из фильмов, а потом вернул обратно  
+SELECT movie_name FROM actors GROUP BY movie_name HAVING count(surname)>1 ORDER BY surname
+-- -- Так как у меня вышло так, что во всех фильмах прнимало участие 2 и более актеров, то для проверки изменял название одного из фильмов, а потом вернул обратно  
+SELECT surname, count(movie_name) as 'count of movies', sum(fee_actors) as 'total fee' FROM actors GROUP by name HAVING count(movie_name)>1 and sum(fee_actors)>9999999
 
 SELECT sum(fee_actors) as 'Total fee from 1995 to 2005' FROM actors WHERE release_year BETWEEN 1995 AND 2005
 
 SELECT movie_name, name, surname FROM actors WHERE release_year - (2024 - age) < 35
 
--- Не работает
-movie_name WHERE movie_name REGEXP '^[a-z]' 
+SELECT movie_name FROM actors WHERE movie_name GLOB '^[A-Za-z]+ [A-Za-z]+$'
 
 SELECT movie_name, sum(fee_actors) as summa FROM actors GROUP BY movie_name ORDER BY summa DESC LIMIT 5
 
