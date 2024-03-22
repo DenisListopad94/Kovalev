@@ -81,8 +81,8 @@ SELECT surname, count(movie_name) as 'count of movies', sum(fee_actors) as 'tota
 SELECT sum(fee_actors) as 'Total fee from 1995 to 2005' FROM actors WHERE release_year BETWEEN 1995 AND 2005
 
 SELECT movie_name, name, surname FROM actors WHERE release_year - (2024 - age) < 35
-
-SELECT movie_name FROM actors WHERE movie_name GLOB '^[A-Za-z]+ [A-Za-z]+$'
+-- Данное регулярное выражение корректно работает в python, но ничего не отлавливает в db browser. Единственное что нашел '* *', но это выражение будет отливать фильмы состоящие из двух и более, а не ровно из двух слов
+--SELECT movie_name FROM actors WHERE movie_name GLOB '^[A-Za-z]+ [A-Za-z]+$'
 
 SELECT movie_name, sum(fee_actors) as summa FROM actors GROUP BY movie_name ORDER BY summa DESC LIMIT 5
 
