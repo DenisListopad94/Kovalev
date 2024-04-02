@@ -1,0 +1,65 @@
+--5
+ALTER TABLE movies  ADD COLUMN box_office INTEGER DEFAULT NULL; 
+UPDATE movies
+SET box_office = CASE movie_id
+	WHEN 1 THEN 2264000000
+	WHEN 2 THEN 352100000
+	WHEN 3 THEN 678200000
+	WHEN 4 THEN 519800000
+	WHEN 5 THEN 487300000
+	WHEN 6 THEN 474200000
+	WHEN 7 THEN 457700000
+	WHEN 8 THEN 546300000
+	WHEN 9 THEN 475800000
+	WHEN 10 THEN 350500000
+	WHEN 12 THEN 114800000
+	WHEN 13 THEN 463400000
+	WHEN 14 THEN 450700000
+	WHEN 15 THEN 72000000
+	WHEN 16 THEN 141400000
+	WHEN 17 THEN 273300000
+	WHEN 18 THEN 589400000
+	WHEN 19 THEN 630600000
+	WHEN 20 THEN 701700000
+	WHEN 21 THEN 294800000
+	WHEN 22 THEN 27400000
+	WHEN 23 THEN 140770000
+	WHEN 24 THEN 141600000
+END;
+
+SELECT DISTINCT actors.name, actors.surname, movies.name_movie
+FROM actors_movies
+LEFT JOIN actors
+ON actors_movies.actors_id = actors.actors_id
+LEFT JOIN movies
+ON actors_movies.movies_id = movies.movie_id
+WHERE actors_movies.movies_id in
+(
+SELECT movie_id FROM movies 
+WHERE box_office > 150000000
+)
+
+--13
+WITH Actors_earning AS (
+	SELECT actors_movies.actors_id,sum(CASE 
+		WHEN movies.box_office > 150000000 THEN movies.box_office * 0.2
+		WHEN movies.box_office BETWEEN 100000000 AND 150000000 THEN movies.box_office * 0.15
+		ELSE movies.box_office * 0.15
+	END )as actors_pay
+	FROM actors_movies
+	JOIN movies
+	ON actors_movies.movies_id = movies.movie_id
+	GROUP BY actors_movies.actors_id
+	HAVING actors_movies.actors_id not NULL
+)
+UPDATE Bank_accounts
+SET finance = Actors_earning.actors_pay
+FROM Actors_earning
+WHERE Bank_accounts.actors_id = Actors_earning.actors_id
+
+--11
+SELECT actors.name, actors.surname
+FROM actors
+JOIN Bank_accounts
+ON Bank_accounts.actors_id = actors.actors_id
+ORDER BY Bank_accounts.finance DESC LIMIT 5
